@@ -1,0 +1,19 @@
+# 標準CI呼び出し（実体: https://github.com/sinoda1114/ci-standard）
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: sinoda1114/ci-standard/.github/workflows/python-ci.yml@main
+    secrets: inherit
