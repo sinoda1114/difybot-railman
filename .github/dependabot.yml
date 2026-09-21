@@ -1,0 +1,12 @@
+# 依存更新の自動PR（sweeper が配布。編集は ci-standard 側で）
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
