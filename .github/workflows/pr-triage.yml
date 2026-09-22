@@ -2,7 +2,7 @@
 # このファイルを対象リポジトリの .github/workflows/pr-triage.yml に置く。
 # 必要な Secret: TYPESAFE_API_KEY（無くても動くが、JEV なしの粗い束ね方になる）
 #
-# 動き: AI レビューボットが PR にレビューを投稿するたび（と人がスレッドを解決/再開したとき）に起動し、3 分待って（Bot が出そろうのを待つ）
+# 動き: AI レビューボットが PR にレビューを投稿するたびに起動し、3 分待って（Bot が出そろうのを待つ）
 #       スレッドを「同じ問題」で束ね種別順に並べた表を、PR の固定コメントとして投稿・更新する。
 #       正誤の判定はしない。人か Claude がグループ単位で判断する。
 
@@ -11,9 +11,12 @@ name: PR triage
 on:
   pull_request_review:
     types: [submitted]
-  # 人がスレッドを解決/再開したときも表を作り直す（解決済みは表から外れる。Bot の新しいレビューが無くても古い表を残さない）
-  pull_request_review_thread:
-    types: [resolved, unresolved]
+  # 注意: pull_request_review_thread は GitHub Actions のトリガーとして存在しない。
+  # 2026-09-21 に「人がスレッドを解決したときも表を作り直す」目的で足したところ、
+  # "Unexpected value 'pull_request_review_thread'" で **全リポジトリのワークフローが
+  # 構文エラーになり、一度も起動しなくなった**（実測: 配布後の run は全て startup_failure）。
+  # 解決/再開を拾いたい場合は pull_request_review の他に使える口が無いため、
+  # 現状は Bot のレビュー投稿だけを起点にする。
 
 # 同じ PR で新しいレビューが来たら、待機中の旧ジョブを打ち切って最後の 1 回だけ集計する
 concurrency:
@@ -29,8 +32,7 @@ jobs:
     # Bot のレビューだけを対象にする（人のレビューでは起動しない）。fork からの PR は投稿権限が無いので起動しない
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
-      (github.event_name == 'pull_request_review_thread' ||
-      endsWith(github.event.review.user.login, '[bot]') ||
+      (endsWith(github.event.review.user.login, '[bot]') ||
       contains(fromJSON('["cursor","devin-ai-integration","copilot-pull-request-reviewer","chatgpt-codex-connector","amazon-q-developer"]'), github.event.review.user.login))
     # @main 参照は意図的（標準CIと同じ）。ci-standard は同一オーナーの標準リポジトリ（main は PR 経由・self-test 必須）で、
     # SHA 固定にすると sweeper が毎日全リポジトリを書き換えることになる。ci-standard 側で第三者 Action は SHA 固定している
