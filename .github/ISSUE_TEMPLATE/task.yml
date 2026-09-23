@@ -1,0 +1,54 @@
+# sweeper（sinoda1114/ci-standard）が配布した骨格。自由に編集してよい（sweeper は無いときに置くだけで、以後は触らない）
+name: タスク (T-N)
+description: 実装・修正・調査タスク（Issue 正本）
+title: "T-XXX: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        タイトルは **`T-XXX: 短いタスク名`** の形式にしてください（`T-N` は既存 Issue タイトルの最大 +1）。
+        種類は右の `type:*` ラベルで分類します。状態は GitHub Project のカラムで管理します（status ラベルは使いません）。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: なぜ必要か。ユーザーの発言・スクショ・既存挙動など。
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: 対象
+      value: |
+        - 対象ページ:
+        - 対象コンポーネント:
+        - 対象外:
+  - type: textarea
+    id: plan
+    attributes:
+      label: 実装方針
+      value: |
+        - 既存パターン:
+        - 変更方針:
+        - 注意点:
+  - type: textarea
+    id: done
+    attributes:
+      label: Done 条件
+      value: |
+        - [ ] 期待する表示/挙動になっている
+        - [ ] 対象外画面へ波及していない
+        - [ ] 型検査・lint・関連テストが通る
+        - [ ] PR を作成して Issue と紐付ける（Refs/Closes #N）
+        - [ ] Production 反映後に確認する
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: 関連
+      value: |
+        - PR:
+        - 参考:
+        - スクショ:
